@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>acquarius AI Interview Portal</title>
+    <style>
+      :root {
+        --primary: #0f172a;
+        --text: #1e293b;
+        --emerald: #10b981;
+        --emerald-hover: #059669;
+        --bg: #f8fafc;
+        --border: #e2e8f0;
+      }
+      body {
+        font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: var(--bg);
+        color: var(--text);
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      /* Navigation Header with Auto-Cropped Company Logo */
+      header {
+        background: white;
+        padding: 14px 28px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        text-decoration: none;
+      }
+      .brand-logo-wrap {
+        width: 146px;
+        height: 38px;
+        overflow: hidden;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .brand-logo {
+        width: 200px;
+        height: auto;
+        max-width: none;
+        display: block;
+        mix-blend-mode: multiply;
+      }
+      .brand-sub {
+        font-size: 14px;
+        font-weight: 500;
+        color: #475569;
+        border-left: 1.5px solid #cbd5e1;
+        padding-left: 14px;
+        display: inline-block;
+      }
+      .candidate-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .candidate-badge {
+        background: #e2e8f0;
+        color: var(--primary);
+        font-weight: 700;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        text-transform: uppercase;
+      }
+      .candidate-details {
+        font-size: 13px;
+        font-weight: 500;
+        text-align: right;
+      }
+      .candidate-role {
+        font-size: 11px;
+        color: #64748b;
+        margin-top: 2px;
+      }
+
+      .container {
+        max-width: 1100px;
+        width: 100%;
+        margin: 30px auto;
+        padding: 0 20px;
+        box-sizing: border-box;
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.04);
+        border: 1px solid var(--border);
+        padding: 32px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      h1, h2 {
+        color: var(--primary);
+        font-weight: 700;
+        margin: 0 0 10px 0;
+        letter-spacing: -0.02em;
+      }
+      p {
+        font-size: 15px;
+        line-height: 1.6;
+        color: #475569;
+        margin: 0 0 24px 0;
+      }
+
+      #error-box {
+        display: none;
+        color: #b91c1c;
+        background: #fef2f2;
+        border: 1px solid #fee2e2;
+        padding: 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        margin-bottom: 24px;
+        text-align: left;
+      }
+
+      /* Welcome View Setup */
+      .welcome-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        align-items: center;
+      }
+      .welcome-hero svg {
+        width: 100%;
+        max-width: 440px;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+      }
+      .checklist-section h3 {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--primary);
+        margin: 0 0 14px 0;
+        text-align: left;
+      }
+      .check-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 13px 16px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        margin-bottom: 12px;
+        text-align: left;
+        background: #f8fafc;
+        transition: all 0.2s;
+      }
+      .check-item.active {
+        border-color: #34d399;
+        background: #f0fdf4;
+      }
+      .check-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        font-weight: bold;
+        font-size: 13px;
+        flex-shrink: 0;
+      }
+      .check-icon.pending {
+        background: #fee2e2;
+        color: #b91c1c;
+        border: 1px solid #fca5a5;
+      }
+      .check-icon.success {
+        background: #d1fae5;
+        color: #065f46;
+        border: 1px solid #6ee7b7;
+      }
+      .check-details .title {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--primary);
+      }
+      .check-details .sub {
+        font-size: 12px;
+        color: #64748b;
+        margin-top: 2px;
+      }
+
+      /* Split-Screen Active Interview Layout */
+      .interview-grid {
+        display: none;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 32px;
+      }
+      .media-col {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .video-wrap {
+        background: #000;
+        border-radius: 12px;
+        overflow: hidden;
+        position: relative;
+        width: 100%;
+        padding-top: 66%;
+        border: 1px solid var(--border);
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+      }
+      video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      #audio-badge {
+        display: none;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #e3f2fd;
+        color: #0d47a1;
+        padding: 14px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-align: center;
+        width: 80%;
+      }
+
+      .rec-badge {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        background: rgba(0,0,0,0.65);
+        backdrop-filter: blur(4px);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: bold;
+        display: none;
+        align-items: center;
+        gap: 6px;
+      }
+      .rec-dot {
+        width: 8px;
+        height: 8px;
+        background: #ef4444;
+        border-radius: 50%;
+        animation: pulse 1.5s infinite;
+      }
+      .rec-badge.paused .rec-dot {
+        background: #f59e0b;
+        animation: none;
+      }
+      @keyframes pulse {
+        0% { opacity: 0.3; }
+        50% { opacity: 1; }
+        100% { opacity: 0.3; }
+      }
+
+      .waveform-wrap {
+        position: absolute;
+        bottom: 16px;
+        left: 16px;
+        right: 16px;
+        background: rgba(0,0,0,0.55);
+        backdrop-filter: blur(4px);
+        padding: 8px 12px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .waveform-text {
+        color: white;
+        font-size: 11px;
+        font-weight: 500;
+        opacity: 0.9;
+        width: 72px;
+      }
+      .wave-container {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        height: 24px;
+        flex-grow: 1;
+      }
+      .wave-bar {
+        background: var(--emerald);
+        width: 3px;
+        height: 3px;
+        border-radius: 2px;
+        transition: height 0.08s ease;
+      }
+
+      .media-status {
+        display: flex;
+        gap: 12px;
+      }
+      .status-card {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #475569;
+      }
+      .status-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #94a3b8;
+        flex-shrink: 0;
+      }
+      .status-dot.active {
+        background: var(--emerald);
+        box-shadow: 0 0 0 3px rgba(16,185,129,0.2);
+      }
+
+      /* Right Column: Progress, Question Card, Controls */
+      .nav-col {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .progress-section {
+        margin-bottom: 20px;
+      }
+      .progress-label {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+      }
+      .progress-bar-wrap {
+        height: 6px;
+        background: #e2e8f0;
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .progress-bar-fill {
+        height: 100%;
+        width: 0%;
+        background: var(--emerald);
+        transition: width 0.3s ease;
+      }
+
+      .question-box {
+        background: #f8fafc;
+        padding: 24px;
+        border-radius: 8px;
+        margin-bottom: 24px;
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--primary);
+        line-height: 1.5;
+        border-left: 4px solid var(--emerald);
+        text-align: left;
+        min-height: 110px;
+      }
+
+      .control-box {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .timer-badge {
+        display: none;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #475569;
+        margin-bottom: 4px;
+      }
+      .btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        padding: 14px 24px;
+        border-radius: 8px;
+        font-size: 15px;
+        cursor: pointer;
+        font-weight: 700;
+        width: 100%;
+        transition: all 0.2s;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        box-sizing: border-box;
+      }
+      .btn:hover { background-color: #1e293b; }
+      .btn:disabled {
+        background-color: #cbd5e1;
+        color: #64748b;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+      .btn-emerald { background-color: var(--emerald); }
+      .btn-emerald:hover { background-color: var(--emerald-hover); }
+      .btn-record { background-color: #ef4444 !important; }
+      .btn-record:hover { background-color: #dc2626 !important; }
+
+      .btn-group {
+        display: flex;
+        gap: 12px;
+      }
+      .btn-sec {
+        background: transparent;
+        color: #475569;
+        border: 1px solid var(--border);
+        padding: 12px;
+        width: auto;
+        min-width: 100px;
+      }
+      .btn-sec:hover { background: #f1f5f9; }
+
+      /* Loading, Processing, Completion & Already-Completed Views */
+      #loading-section {
+        text-align: center;
+        padding: 40px 10px;
+      }
+      #processing-section, #completion-section, #already-completed-section {
+        display: none;
+        text-align: center;
+        padding: 40px 10px;
+      }
+      .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid var(--emerald);
+        border-radius: 50%;
+        width: 44px;
+        height: 44px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px auto;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      .success-graphic {
+        color: var(--emerald);
+        font-size: 56px;
+        line-height: 1;
+        margin-bottom: 18px;
+      }
+      .lock-graphic {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: #ecfdf5;
+        color: #059669;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        margin: 0 auto 18px auto;
+      }
+
+      @media (max-width: 768px) {
+        header { padding: 12px 16px; }
+        .brand-logo-wrap { width: 118px; height: 32px; }
+        .brand-logo { width: 160px; }
+        .brand-sub { font-size: 12px; padding-left: 10px; }
+        .card { padding: 20px; }
+        .welcome-grid, .interview-grid {
+          grid-template-columns: 1fr;
+          gap: 24px;
+        }
+        .media-status {
+          flex-direction: column;
+          gap: 8px;
+        }
+        .candidate-details { display: none; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- Branded Header using your exact logo.png image -->
+    <header>
+      <a href="#" class="brand" onclick="return false;">
+        <span class="brand-logo-wrap">
+          <img src="logo.png" alt="acquarius" class="brand-logo">
+        </span>
+        <span class="brand-sub">AI Interview Portal</span>
+      </a>
+      <div class="candidate-info" id="head-candidate" style="display: none;">
+        <div class="candidate-details">
+          <div id="head-role" style="font-weight: 700; color: var(--primary);">Interview Session</div>
+          <div class="candidate-role">Ai Screening</div>
+        </div>
+        <div class="candidate-badge" id="head-avatar">AI</div>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="card" id="main-content">
+        <div id="error-box"></div>
+
+        <!-- Welcome Screen & Readiness Checklist -->
+        <div id="intro-section" style="display: none;">
+          <div class="welcome-grid">
+            <div class="welcome-hero">
+              <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="200" cy="150" r="105" fill="#f0fdf4"/>
+                <path d="M120,240 C120,180 160,150 200,150 C240,150 280,180 280,240" fill="#e2e8f0"/>
+                <rect x="135" y="75" width="130" height="95" rx="10" fill="#1e293b"/>
+                <circle cx="200" cy="116" r="22" fill="#64748b"/>
+                <path d="M148,112 L158,122 L153,140 L173,130 L190,144" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M252,112 L242,122 L247,140 L227,130 L210,144" stroke="#6366f1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <rect x="108" y="208" width="184" height="42" rx="8" fill="white" stroke="#e2e8f0" stroke-width="2"/>
+                <circle cx="130" cy="229" r="10" fill="#10b981"/>
+                <path d="M126.5,229 L129,231.5 L133.5,226.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <rect x="150" y="223" width="90" height="4.5" rx="2" fill="#cbd5e1"/>
+                <rect x="150" y="232" width="56" height="3.5" rx="1.5" fill="#e2e8f0"/>
+              </svg>
+            </div>
+            <div class="checklist-section">
+              <h2>Setup Your Interview</h2>
+              <p>Welcome! Read each question on screen and answer clearly using your camera and microphone. This is a one-time link, so please complete the session in a single sitting.</p>
+
+              <h3>Pre-Interview Checklist</h3>
+              <div class="check-item" id="check-cam">
+                <div class="check-icon pending" id="check-cam-icon">!</div>
+                <div class="check-details">
+                  <div class="title">Camera Connected</div>
+                  <div class="sub">Make sure you are centred and well-lit.</div>
+                </div>
+              </div>
+              <div class="check-item" id="check-mic">
+                <div class="check-icon pending" id="check-mic-icon">!</div>
+                <div class="check-details">
+                  <div class="title">Microphone Ready</div>
+                  <div class="sub">Speak clearly so your voice is picked up cleanly.</div>
+                </div>
+              </div>
+              <div class="check-item" id="check-quiet">
+                <div class="check-icon pending" id="check-quiet-icon">!</div>
+                <div class="check-details">
+                  <div class="title">Quiet Space</div>
+                  <div class="sub">Choose a quiet spot with minimal background noise.</div>
+                </div>
+              </div>
+
+              <button class="btn btn-emerald" id="start-btn" onclick="requestPermissions()">Enable Camera &amp; Mic</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="loading-section">
+          <div class="spinner"></div>
+          <p>Loading your interview session...</p>
+        </div>
+
+        <!-- Single-Use Lock Screen -->
+        <div id="already-completed-section">
+          <div class="lock-graphic">✓</div>
+          <h2>Interview Already Completed</h2>
+          <p>You have already submitted your responses for this position. Each interview link can only be used once—our Talent Acquisition team will review your submission and reach out with next steps.</p>
+        </div>
+
+        <!-- Split-Screen Active Interview -->
+        <div class="interview-grid" id="interview-section">
+          <div class="media-col">
+            <div class="video-wrap">
+              <video id="webcam" autoplay muted playsinline></video>
+              <div id="audio-badge">🎙️ Audio-Only Mode Active</div>
+
+              <div class="rec-badge" id="rec-badge">
+                <div class="rec-dot"></div> REC <span id="rec-timer">00:00</span>
+              </div>
+
+              <div class="waveform-wrap">
+                <div class="waveform-text">Mic Activity</div>
+                <div class="wave-container" id="wave-bars"></div>
+              </div>
+            </div>
+
+            <div class="media-status">
+              <div class="status-card">
+                <div class="status-dot" id="dot-cam"></div>
+                <span id="cam-status-text">Camera Preview Active</span>
+              </div>
+              <div class="status-card">
+                <div class="status-dot" id="dot-mic"></div>
+                <span>Microphone Connected</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="nav-col">
+            <div class="progress-section">
+              <div class="progress-label">
+                <span>Assessment Progress</span>
+                <span id="progress-text" style="color: var(--emerald);">Question 1 of ...</span>
+              </div>
+              <div class="progress-bar-wrap">
+                <div class="progress-bar-fill" id="progress-fill"></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="question-box" id="q-box">Question will appear here...</div>
+
+              <div class="control-box">
+                <div class="timer-badge" id="timer-label">
+                  ⏱️ <span>Take your time — answer clearly and concisely</span>
+                </div>
+
+                <div class="btn-group">
+                  <button class="btn btn-emerald" id="action-btn" onclick="handleInterviewFlow()">Start Recording Response</button>
+                  <button class="btn btn-sec" id="pause-btn" style="display: none;" onclick="pauseRecording()">Pause</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="processing-section">
+          <div class="spinner"></div>
+          <p id="processing-status">Finalizing your submission... Just a few seconds!</p>
+        </div>
+
+        <div id="completion-section">
+          <div class="success-graphic">✓</div>
+          <h2>Interview Completed Successfully!</h2>
+          <p>Thank you for your time. Your responses have been submitted and our Talent Acquisition team will get back to you shortly. You may safely close this window now.</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const GAS_API_URL = "https://script.google.com/macros/s/AKfycbz77gQmnNxtxykmVXgP0-2W58Smg3_m71NWAfzleS4mk31cBNS9wPONGJB3g3l-dDD0/exec";
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const tokenBase64 = urlParams.get('token') || "";
+
+      let payload = null;
+      let streamRef = null;
+      let hasVideoTrack = false;
+      let mediaRecorder = null;
+      let recordedChunks = [];
+      let questionsList = [];
+      let totalEvalQuestions = 5;
+      let currentQuestionIndex = 0;
+      let isRecording = false;
+      let isPaused = false;
+
+      let recStartTime = 0;
+      let recInterval = null;
+      let elapsedTime = 0;
+      let waveFrameId = null;
+
+      let currentSnapshots = [];
+      let snapshotTimeout = null;
+      let snapshotInterval = null;
+      let uploadChain = Promise.resolve();
+      let evalSummaries = [null, null, null, null, null];
+      let finalEvalSaved = false;
+
+      const waveBarsContainer = document.getElementById('wave-bars');
+      const barElements = [];
+      for (let i = 0; i < 18; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'wave-bar';
+        waveBarsContainer.appendChild(bar);
+        barElements.push(bar);
+      }
+
+      function updateVisualWave() {
+        if (!isRecording || isPaused) {
+          barElements.forEach(b => { b.style.height = '3px'; });
+          waveFrameId = null;
+          return;
+        }
+        barElements.forEach(b => {
+          const height = Math.floor(Math.random() * 20) + 4;
+          b.style.height = height + 'px';
+        });
+        waveFrameId = requestAnimationFrame(updateVisualWave);
+      }
+
+      function getRoleInitials(roleName) {
+        if (!roleName) return "AI";
+        const parts = String(roleName).trim().split(/\s+/).filter(Boolean);
+        if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+        return (parts[0][0] + parts[1][0]).toUpperCase();
+      }
+
+      window.onload = async function() {
+        if (!tokenBase64) {
+          showError("Invalid or missing token. Please use the link sent to your email/WhatsApp.");
+          return;
+        }
+
+        try {
+          let base64 = tokenBase64.replace(/-/g, '+').replace(/_/g, '/');
+          while (base64.length % 4) base64 += '=';
+          payload = JSON.parse(atob(base64));
+
+          if (new Date().getTime() > payload.exp) {
+            showError("This interview link has expired. You had 48 hours to complete the assessment.");
+            return;
+          }
+        } catch (e) {
+          showError("Corrupted token. Please contact HR.");
+          return;
+        }
+
+        if (payload.role) {
+          document.getElementById('head-role').innerText = payload.role;
+          document.getElementById('head-avatar').innerText = getRoleInitials(payload.role);
+          document.getElementById('head-candidate').style.display = 'flex';
+        }
+
+        try {
+          const res = await fetch(GAS_API_URL + "?token=" + encodeURIComponent(tokenBase64));
+          const data = await res.json();
+
+          if (data.alreadyCompleted) {
+            document.getElementById('loading-section').style.display = "none";
+            document.getElementById('already-completed-section').style.display = "block";
+            return;
+          }
+
+          const customQuestions = data.questions || ["What is your current and expected CTC?"];
+
+          const roleSkill = (payload.role && !/^(test|sheet\d*)$/i.test(payload.role.trim()))
+            ? payload.role.trim()
+            : "your core skill/domain";
+
+          questionsList = [
+            { text: "Could you give us a brief overview of your professional background and what you are currently doing in your role?", isEval: true },
+            { text: "What made you consider a change, and what interests you about this role and our company?", isEval: true },
+            { text: "Can you walk us through your hands-on experience with " + roleSkill + ", including one real project or achievement where you were directly responsible?", isEval: true },
+            { text: "Describe a challenging situation or problem you faced at work. How did you approach it, what actions did you take, and what was the outcome?", isEval: true },
+            { text: "Tell us about a time you had a disagreement with a colleague or received critical feedback. How did you handle it, and what did you learn?", isEval: true }
+          ];
+          totalEvalQuestions = questionsList.length;
+
+          customQuestions.forEach(function(qText) {
+            if (!/introduce\s*yourself/i.test(qText)) {
+              questionsList.push({ text: qText, isEval: false });
+            }
+          });
+
+          document.getElementById('loading-section').style.display = "none";
+          document.getElementById('intro-section').style.display = "block";
+        } catch (err) {
+          showError("Could not load interview questions. Please refresh the page.");
+        }
+      };
+
+      function showError(message) {
+        document.getElementById('loading-section').style.display = "none";
+        document.getElementById('intro-section').style.display = "none";
+        document.getElementById('processing-section').style.display = "none";
+        document.getElementById('interview-section').style.display = "none";
+        document.getElementById('already-completed-section').style.display = "none";
+        document.getElementById('error-box').innerText = message;
+        document.getElementById('error-box').style.display = "block";
+      }
+
+      function updateCheckStatus(elementId, char, type) {
+        const item = document.getElementById(elementId);
+        const icon = document.getElementById(elementId + '-icon');
+        if (type === 'success') item.classList.add('active');
+        icon.className = 'check-icon ' + type;
+        icon.innerText = char;
+      }
+
+      async function requestPermissions() {
+        const btn = document.getElementById('start-btn');
+        btn.innerText = "Requesting access...";
+        btn.disabled = true;
+
+        try {
+          streamRef = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+          hasVideoTrack = true;
+          document.getElementById('webcam').srcObject = streamRef;
+
+          updateCheckStatus('check-cam', '✓', 'success');
+          updateCheckStatus('check-mic', '✓', 'success');
+          updateCheckStatus('check-quiet', '✓', 'success');
+
+          document.getElementById('dot-cam').classList.add('active');
+          document.getElementById('dot-mic').classList.add('active');
+        } catch (err) {
+          try {
+            streamRef = await navigator.mediaDevices.getUserMedia({ audio: true });
+            hasVideoTrack = false;
+            document.getElementById('webcam').style.display = "none";
+            document.getElementById('audio-badge').style.display = "block";
+            document.getElementById('cam-status-text').innerText = "Audio-Only Mode";
+
+            updateCheckStatus('check-cam', '!', 'pending');
+            updateCheckStatus('check-mic', '✓', 'success');
+            updateCheckStatus('check-quiet', '✓', 'success');
+
+            document.getElementById('dot-mic').classList.add('active');
+          } catch (audioErr) {
+            showError("Permission Denied (" + audioErr.name + "): Please allow camera and microphone access to start the interview.");
+            btn.innerText = "Enable Camera & Mic";
+            btn.disabled = false;
+            return;
+          }
+        }
+
+        setTimeout(() => {
+          document.getElementById('error-box').style.display = "none";
+          document.getElementById('intro-section').style.display = "none";
+          document.getElementById('interview-section').style.display = "grid";
+          setupQuestion();
+        }, 650);
+      }
+
+      function setupQuestion() {
+        const currNum = currentQuestionIndex + 1;
+        const total = questionsList.length;
+
+        document.getElementById('progress-text').innerText = "Question " + currNum + " of " + total;
+        const pct = Math.round((currNum / total) * 100);
+        document.getElementById('progress-fill').style.width = pct + '%';
+
+        document.getElementById('q-box').innerText = questionsList[currentQuestionIndex].text;
+
+        const btn = document.getElementById('action-btn');
+        btn.innerText = "Start Recording Response";
+        btn.className = "btn btn-emerald";
+        btn.disabled = false;
+
+        document.getElementById('pause-btn').style.display = "none";
+        document.getElementById('timer-label').style.display = "none";
+        document.getElementById('rec-badge').style.display = "none";
+        document.getElementById('rec-badge').classList.remove('paused');
+        document.getElementById('rec-timer').innerText = "00:00";
+        stopTimers();
+      }
+
+      function captureVideoSnapshot() {
+        if (!hasVideoTrack || currentSnapshots.length >= 3) return;
+        const video = document.getElementById('webcam');
+        if (!video || video.readyState < 2 || video.videoWidth === 0) return;
+
+        const targetWidth = 320;
+        const targetHeight = Math.round(targetWidth * (video.videoHeight / video.videoWidth));
+        const canvas = document.createElement('canvas');
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, targetWidth, targetHeight);
+
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+        const base64Img = dataUrl.split(',')[1];
+        if (base64Img) currentSnapshots.push(base64Img);
+      }
+
+      function startSnapshotCapture() {
+        stopSnapshotCapture();
+        currentSnapshots = [];
+        if (!hasVideoTrack) return;
+
+        snapshotTimeout = setTimeout(() => {
+          if (!isPaused) captureVideoSnapshot();
+          snapshotInterval = setInterval(() => {
+            if (currentSnapshots.length >= 3) {
+              stopSnapshotCapture();
+            } else if (!isPaused) {
+              captureVideoSnapshot();
+            }
+          }, 6000);
+        }, 1500);
+      }
+
+      function stopSnapshotCapture() {
+        if (snapshotTimeout) { clearTimeout(snapshotTimeout); snapshotTimeout = null; }
+        if (snapshotInterval) { clearInterval(snapshotInterval); snapshotInterval = null; }
+      }
+
+      function startTimers() {
+        if (recInterval) clearInterval(recInterval);
+        recStartTime = Date.now() - elapsedTime;
+        document.getElementById('rec-badge').style.display = "flex";
+        document.getElementById('timer-label').style.display = "flex";
+
+        recInterval = setInterval(() => {
+          elapsedTime = Date.now() - recStartTime;
+          const secs = Math.floor(elapsedTime / 1000);
+          const m = Math.floor(secs / 60).toString().padStart(2, '0');
+          const s = (secs % 60).toString().padStart(2, '0');
+          document.getElementById('rec-timer').innerText = m + ":" + s;
+        }, 1000);
+      }
+
+      function stopTimers() {
+        if (recInterval) { clearInterval(recInterval); recInterval = null; }
+        elapsedTime = 0;
+      }
+
+      function pauseRecording() {
+        if (!mediaRecorder) return;
+        const btn = document.getElementById('pause-btn');
+        try {
+          if (!isPaused) {
+            mediaRecorder.pause();
+            isPaused = true;
+            btn.innerText = "Resume";
+            if (recInterval) { clearInterval(recInterval); recInterval = null; }
+            document.getElementById('rec-badge').classList.add('paused');
+          } else {
+            mediaRecorder.resume();
+            isPaused = false;
+            btn.innerText = "Pause";
+            document.getElementById('rec-badge').classList.remove('paused');
+            startTimers();
+            updateVisualWave();
+          }
+        } catch (e) {
+          console.warn("Pause/resume not supported on this browser:", e);
+        }
+      }
+
+      function getSupportedAudioMime() {
+        const types = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg'];
+        for (let t of types) {
+          if (typeof MediaRecorder !== 'undefined' && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) {
+            return t;
+          }
+        }
+        return '';
+      }
+
+      function blobToBase64(blob) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result.split(',')[1]);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+      }
+
+      function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      async function postToGASWithRetry(bodyObj, maxRetries = 3) {
+        let lastErr = null;
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+          try {
+            const res = await fetch(GAS_API_URL, {
+              method: "POST",
+              headers: { "Content-Type": "text/plain;charset=utf-8" },
+              body: JSON.stringify(bodyObj)
+            });
+            const text = await res.text();
+            const json = JSON.parse(text);
+            if (json.status === "ok" || json.status === "already_completed") return json;
+            lastErr = new Error(json.message || "Server returned error");
+          } catch (e) {
+            lastErr = e;
+          }
+          if (attempt < maxRetries) {
+            await sleep(2500 * attempt);
+          }
+        }
+        throw lastErr;
+      }
+
+      async function uploadSingleAnswer(qIndex, qObj, mimeType, blob, snapshots) {
+        const base64Data = await blobToBase64(blob);
+        const reqBody = {
+          action: "submit_answer",
+          row: payload.row,
+          role: payload.role,
+          question: qObj.text,
+          isEval: qObj.isEval,
+          mimeType: mimeType,
+          base64Media: base64Data
+        };
+        if (qObj.isEval && snapshots && snapshots.length > 0) {
+          reqBody.snapshots = snapshots;
+        }
+
+        const json = await postToGASWithRetry(reqBody);
+        if (json.status === "already_completed") return;
+
+        if (qObj.isEval && json.summary) {
+          evalSummaries[qIndex] = {
+            question: qObj.text,
+            summary: json.summary
+          };
+        }
+      }
+
+      async function runFinalEvaluation() {
+        if (finalEvalSaved) return;
+        await postToGASWithRetry({
+          action: "generate_final_evaluation",
+          row: payload.row,
+          role: payload.role,
+          evalSummaries: evalSummaries
+        });
+        finalEvalSaved = true;
+      }
+
+      function handleInterviewFlow() {
+        const btn = document.getElementById('action-btn');
+
+        if (!isRecording) {
+          recordedChunks = [];
+          const currentQ = questionsList[currentQuestionIndex];
+
+          if (currentQ.isEval) {
+            startSnapshotCapture();
+          }
+
+          const audioTracks = streamRef.getAudioTracks();
+          const audioStream = (audioTracks && audioTracks.length > 0) ? new MediaStream(audioTracks) : streamRef;
+          const preferredMime = getSupportedAudioMime();
+          const options = preferredMime
+            ? { mimeType: preferredMime, audioBitsPerSecond: 32000 }
+            : { audioBitsPerSecond: 32000 };
+
+          try {
+            mediaRecorder = new MediaRecorder(audioStream, options);
+          } catch (e) {
+            mediaRecorder = new MediaRecorder(audioStream);
+          }
+
+          mediaRecorder.ondataavailable = function(e) {
+            if (e.data && e.data.size > 0) recordedChunks.push(e.data);
+          };
+
+          mediaRecorder.onstop = function() {
+            const rawMime = mediaRecorder.mimeType || preferredMime || 'audio/webm';
+            const cleanMime = rawMime.split(';')[0] || 'audio/webm';
+            const blob = new Blob(recordedChunks, { type: cleanMime });
+            const qIndex = currentQuestionIndex;
+            const qObj = questionsList[qIndex];
+            const isLastEval = qObj.isEval && (qIndex === totalEvalQuestions - 1);
+            const snapshotsToSend = qObj.isEval ? currentSnapshots.slice() : [];
+
+            uploadChain = uploadChain.then(async () => {
+              await uploadSingleAnswer(qIndex, qObj, cleanMime, blob, snapshotsToSend);
+              if (isLastEval) {
+                await runFinalEvaluation();
+              }
+            }).catch(err => {
+              console.error("Failed processing Q" + (qIndex + 1) + ":", err);
+            });
+
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questionsList.length) {
+              setupQuestion();
+            } else {
+              finishInterview();
+            }
+          };
+
+          mediaRecorder.start(500);
+          isRecording = true;
+          isPaused = false;
+
+          document.getElementById('pause-btn').style.display = "flex";
+          document.getElementById('pause-btn').innerText = "Pause";
+
+          btn.innerText = "Stop Response & Next";
+          btn.className = "btn btn-record";
+
+          startTimers();
+          updateVisualWave();
+        } else {
+          btn.disabled = true;
+          const currentQ = questionsList[currentQuestionIndex];
+          stopSnapshotCapture();
+          if (currentQ && currentQ.isEval && currentSnapshots.length === 0) {
+            captureVideoSnapshot();
+          }
+
+          isRecording = false;
+          isPaused = false;
+          if (waveFrameId) { cancelAnimationFrame(waveFrameId); waveFrameId = null; }
+          barElements.forEach(b => { b.style.height = '3px'; });
+
+          mediaRecorder.stop();
+          stopTimers();
+        }
+      }
+
+      async function finishInterview() {
+        stopSnapshotCapture();
+        stopTimers();
+        if (waveFrameId) { cancelAnimationFrame(waveFrameId); waveFrameId = null; }
+
+        document.getElementById('interview-section').style.display = "none";
+        document.getElementById('audio-badge').style.display = "none";
+        document.getElementById('processing-section').style.display = "block";
+
+        if (streamRef) {
+          streamRef.getTracks().forEach(track => track.stop());
+        }
+
+        try {
+          await uploadChain;
+          if (!finalEvalSaved) {
+            await runFinalEvaluation();
+          }
+
+          await postToGASWithRetry({
+            action: "mark_completed",
+            row: payload.row,
+            role: payload.role
+          });
+
+          document.getElementById('processing-section').style.display = "none";
+          document.getElementById('completion-section').style.display = "block";
+        } catch (err) {
+          showError("Could not complete final evaluation: " + err.message);
+        }
+      }
+    </script>
+  </body>
+</html>
